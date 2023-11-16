@@ -1,0 +1,39 @@
+<div class="nav">
+    <h1>Listado de iPhones:</h1>
+    <h3><a href="http://localhost:8080/cart/654be5c9cc1dc6449ae333a3"><i class="fa-solid fa-cart-shopping"></i></a></h3>
+</div>
+<div class="wrapper"> 
+        <div class="welcome-container">
+        <h2>Bienvenido, {{user.first_name}}</h2>
+        <h3>Rol: {{user.rol}}</h3>
+        <a href="/api/sessions/logout" role="button">Logout</a>
+    </div>
+    <div class="products-list-container">
+        {{#each payload}}
+        <div class="product-container">
+            <div class="product-list">
+                <ul>
+                    <li>Nombre: {{this.name}} {{this.model}}</li>
+                    <li>Precio: ${{this.price}}</li>
+                </ul>
+            </div>
+            <div class="product-buttons-container">
+                <button value="{{this._id}}" class="agregarButton">Agregar </button>
+                <a href="http://localhost:8080/products/{{this._id}}">Ver</a>
+            </div>
+        </div>
+        
+        {{/each}}
+    </div>
+
+
+    <div class="navegador-paginas">
+        {{!-- <button id="anteriorBtn">anterior</button> --}}
+        <a href="{{prevLink}}" role="button" {{#unless hasPrevPage}}disabled{{/unless}}>anterior</a>
+        <h2 class="pagina-h2">Página {{page}}</h2>
+        {{!-- <button id="siguienteBtn">siguiente</button> --}}
+        <a href="{{nextLink}}" role="button" {{#unless hasNextPage}}disabled{{/unless}} >Siguiente</a>
+    </div>
+    
+</div>
+<script src="/js/index.js"></script>

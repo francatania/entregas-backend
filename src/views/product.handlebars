@@ -1,0 +1,25 @@
+<div class="wrapper"> 
+
+    <div class="products-list-container">
+        {{#each product}}
+        <div class="product-container">
+            
+                <ul>
+                    <li>Nombre: {{this.name}} {{this.model}}</li>
+                    <li>Precio: ${{this.price}}</li>
+                    <li>Memoria: {{this.memory}} GB</li>
+                    <li>Memoria: {{this.memory}} GB</li>
+                    <li>Stock: {{this.stock}}</li>
+                    <li>Categoria: {{this.category}}</li>
+                </ul>
+                <button value="{{this._id}}" class="agregarButton">Agregar </button>
+            
+        </div>
+        {{/each}}
+    </div>
+
+    
+</div>
+
+
+<script src="/js/index.js"></script>

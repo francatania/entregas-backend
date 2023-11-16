@@ -1,0 +1,23 @@
+<div class="nav">
+    <h1>Tu carrito</h1>
+</div>
+<div class="wrapper"> 
+    <div class="products-list-container">
+        {{#each productsCart}}
+        <div class="product-container">
+            <div class="product-list">
+                <ul>
+                    <li>Nombre: {{this.name}} {{this.model}}</li>
+                    <li>Precio: ${{this.price}}</li>
+                    <li>Memoria: {{this.memory}} GB</li>
+                    <li>Stock: {{this.stock}}</li>
+                    <li>Categoria: {{this.category}}</li>
+                </ul>
+            </div>
+        </div>
+        
+        {{/each}}
+    </div>
+    
+</div>
+{{!-- <script src="/js/index.js"></script> --}}
