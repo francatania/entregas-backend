@@ -1,34 +1,30 @@
 import { Router } from 'express';
-
+import passport from 'passport';
 import UserModel from '../models/user.model.js';
+import { createHash, isValidPassword } from '../utils.js';
 
 const router = Router();
 
-router.post('/sessions/register', async (req, res) => {
-  const { body } = req;
-  const newUser = await UserModel.create(body);
-  console.log('newUser', newUser);
+router.post('/sessions/register', passport.authenticate('register', { failureRedirect: '/register' }), (req, res) => {
   res.redirect('/login');
+})
+
+
+router.post('/sessions/login', passport.authenticate('login', { failureRedirect: '/login' }), (req, res) => {
+  const rol = 'user';
+  const {first_name, email} = req.user;
+  const userWithRol = {first_name, email, rol}
+  req.session.user = userWithRol;
+  res.redirect('/products');
 });
 
-router.post('/sessions/login', async (req, res) => {
-  const { body: { email, password } } = req;
-  const user = await UserModel.findOne({ email });
-  if (!user) {
-    return res.status(401).send('Correo o contraseña invalidos');
-  }
-  const isPassValid = user.password === password;
-  if (!isPassValid) {
-    return res.status(401).send('Correo o contraseña invalidos');
-  }
+router.get('/sessions/github', passport.authenticate('github', {scope: ['user:email']}))
 
-  let rol = 'user';
-  if(email === 'adminCoder@coder.com' && password === 'adminCod3r123'){
-    rol = 'adm';
-  }
-  const { first_name, last_name } = user;
-  const userWithRole = { first_name, last_name, email, rol };
-  req.session.user = userWithRole;
+router.get('/sessions/github/callback', passport.authenticate('github', {failureRedirect: '/login'}), (req, res)=>{
+  const rol = 'user';
+  const {first_name, email} = req.user;
+  const userWithRol = {first_name, email, rol}
+  req.session.user = userWithRol;
   res.redirect('/products');
 });
 

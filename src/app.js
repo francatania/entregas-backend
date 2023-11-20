@@ -10,13 +10,17 @@ import path from 'path';
 import { __dirname } from './utils.js';
 import expressSession from 'express-session';
 import MongoStore from 'connect-mongo';
+import passport from 'passport';
+import { init as initPassportConfig } from './config/passport.config.js';
+import {URI} from './db/mongodb.js'
+
+
 
 
 
 const app = express();
 
 const SESSION_SECRET = 'qBvPkU2X;J1,51Z!~2p[JW.DT|g:4l@';
-const URI = 'mongodb+srv://developer:Yh4W7ZCJs6Pq112c@cluster0.nljy9ku.mongodb.net/iphoneStore' //agregar la URI
 
 
 app.use(expressSession({
@@ -40,6 +44,10 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.engine('handlebars', handlebars.engine());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'handlebars');
+
+initPassportConfig();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api', productsRouter, cartRouter, sessionsRouter);
 app.use('/', productsViewRouter, cartViewRouter, indexRouter)
