@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import { fileURLToPath } from 'url';
-import productsModel from '../../models/products.model.js';
 import mongoose from 'mongoose';
 import { error } from 'console';
+import passport from 'passport';
+import ProductsController from '../../controller/products.controller.js';
+
 
 
 
@@ -11,21 +13,22 @@ const router = Router();
 
 
 const privateRouter = (req, res, next) =>{
-    if (!req.session.user) {
+    if (!req.user) {
       return res.redirect('/login');
     }
     next();
   };
   
 
-router.get('/products', privateRouter, async (req, res)=>{
+router.get('/products',passport.authenticate('jwt', {session:false}), privateRouter, async (req, res)=>{
     try {
         const limit = parseInt(req.query.limit) || 10;
         const page = parseInt(req.query.page) || 1;
         const sort = req.query.sort;
         const category = req.query.category;
         const status = req.query.status;
-        const user = req.session.user;
+        const user = req.user;
+        console.log(user)
         let options = {
             page: page,
             limit: limit,
@@ -49,7 +52,7 @@ router.get('/products', privateRouter, async (req, res)=>{
         }
 
 
-        const products = await productsModel.paginate(filters, options);
+        const products = await ProductsController.getProducts(filters, options);
 
         const buildResponse = (data, userInfo) => {
             return {
@@ -76,14 +79,7 @@ router.get('/products', privateRouter, async (req, res)=>{
 router.get('/products/:id', async (req, res)=>{
     try {
         const pid = req.params.id;
-        const product = await productsModel.findById(pid);
-        console.log(product)
-        if(!product){
-            console.log('producto no encontrado')
-            return res.status(404).json({message: 'Producto no encontrado'});
-        }else{
-            console.log('producto encontrado')
-        }
+        const product = await ProductsController.getProductById(pid);
         res.render('product', {product});
     } catch (error) {
         return res.status(404).json({message: error.message});

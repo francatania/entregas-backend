@@ -12,8 +12,8 @@ router.get('/cart/:cid', async (req, res)=>{
     try {
         const cart = await cartModel.findById(id).populate('products.product');
         const productsCart = cart.products;
-        console.log(productsCart);
-        res.render('cart', {productsCart}); 
+        console.log(cart.products);
+        res.render('cart', {productsCart: productsCart}); 
     } catch (error) {
         res.status(400).json({message:"Hubo un error al tratar de leer el carrito", error: error.message})
     }

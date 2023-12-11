@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import productsModel from '../models/products.model.js';
 import mongoose from 'mongoose';
+import passport from 'passport';
+import ProductsController from '../controller/products.controller.js';
+
 
 
 const __fileName = fileURLToPath(import.meta.url);
@@ -12,7 +14,7 @@ const __dirName= dirname(__fileName);
 const router = Router();
 
 
-router.get('/products', async (req, res)=>{
+router.get('/products',passport.authenticate('jwt', {session:false}), async (req, res)=>{
     try {
         const limit = parseInt(req.query.limit) || 10;
         const page = parseInt(req.query.page) || 1;
@@ -42,7 +44,7 @@ router.get('/products', async (req, res)=>{
         }
 
 
-        const products = await productsModel.paginate(filters, options);
+        const products = await ProductsController.getProducts(filters, options);
 
         const buildResponse = (data) => {
             return {
@@ -74,7 +76,7 @@ router.post('/products', async (req, res)=>{
         const {body} = req;
         const data = body;
         console.log(data)
-        await productsModel.insertMany(data);
+        await ProductsController.createProducts(data);
         res.status(201).json({message: 'Productos cargados.', products: data})
     } catch (error) {
         res.status(404).json({message:`hubo un error al cargar los products, ${error.message}`, error: error.message})
@@ -82,14 +84,36 @@ router.post('/products', async (req, res)=>{
     }
 })
 
+router.post('/product', async (req, res)=>{
+    try {
+        const {body} = req;
+        const data = body;
+        await ProductsController.createProduct(data);
+        res.status(201).json({message:'Producto creado', product: data});
+    } catch (error) {   
+        res.status(404).json({message: 'Hubo un error al cargar el producto', error: error.message})
+    }
+})
+
 
 router.delete('/products', async (req, res)=>{
     try {
-        await productsModel.deleteMany();
-        res.status(200).json({message: 'Documentos eliminados'});
+        await ProductsController.deleteProducts();
+        res.status(200).json({message: 'Productos eliminados'});
     } catch (error) {
         res.status(400).json({message: error.message});
     }
 })
+
+router.delete('/product/:id', async (req, res)=>{
+    try {
+        const {id} = req.params
+        await ProductsController.deleteProductById(id);
+        res.status(200).json({message: 'Producto eliminado'});
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
+})
+
 
 export default router;
