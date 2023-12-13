@@ -33,9 +33,9 @@ export const init = ()=>{
 // };
 
 // const githubOptions = {
-//   clientID : 'Iv1.6a0114a9776d6926',
-//   clientSecret: '810270d8b78d8b02f88c9e4903a5ab7625e47e55',
-//   callbackURL: 'http://localhost:8080/api/sessions/github/callback'
+//   clientID : '',
+//   clientSecret: '',
+//   callbackURL: ''
 // }
 
 // export const init = () => {
